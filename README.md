@@ -123,8 +123,8 @@ Click Execute
        - Click the "+"
        - Search and click If
        - Click value 1
-          - {{ $items().length }}
-          - Click '\/' to number -> is greater than
+          - {{ $json.id }}
+          - Click '\/' to number -> exists
        - Click value2 and fill in with 0
        - Click Execute step
          <img width="2765" height="1351" alt="image" src="https://github.com/user-attachments/assets/b6c60d59-cef0-400b-ae65-9caeb5ac8df7" />
@@ -150,6 +150,37 @@ Click Execute
          ```
          - Click Execute step
          <img width="2797" height="1360" alt="image" src="https://github.com/user-attachments/assets/230a3256-07b0-4420-8dc5-79b35da1c36b" />
+
+  11b. Respond to Webhook (2)
+       - Click false "+"
+       - Search and Click Respond to Webhook
+       - Change Respond With: JSON
+       - Fill the respond body (Expression)
+         ```
+         {{ {
+           status: "fail",
+           message: "Invalid username or password"
+         } }}
+         ```
+      - Click Execute step
+      - Double Click Webhook (The very first one)
+      - Change Respond: Using 'Respond to Webhook' Node
+
+   12. Test if Works
+       - Click Webhook 'Listen for test event'
+       - Open cmd
+       - Paste
+          ```
+         curl -X POST http://localhost:5678/webhook-test/login ^
+         -H "Content-Type: application/json" ^
+         -d "{\"username\":\"peter1\",\"password\":\"RVMRx1vYgi\"}"
+         ```
+       - Should Appear like this
+         <img width="2345" height="380" alt="image" src="https://github.com/user-attachments/assets/2d4a1206-060b-4043-8f2f-f41b643cb995" />
+
+         
+
+   
 
 
 
