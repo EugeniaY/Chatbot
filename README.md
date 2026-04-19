@@ -221,6 +221,54 @@ Click Execute
          {{ $input.all().map(item => item.json) }}
          ```
        - Execute Step
+   - Create assistant.html
+  
+## Update AI Assistant Feature
+- show marketing employees
+- list finance staff
+- who works in IT
+- give me admin employees
+
+1. Add node Code between Webhook and Execute a SQL query (Javascript)
+   ```
+         const raw = ($json.body?.message || "").toLowerCase().trim();
+         const departments = [
+           "marketing",
+           "finance",
+           "it",
+           "admin",
+           "sales",
+           "hr",
+           "operations"
+         ];
+         
+         let matchedDepartment = null;
+         
+         for (const dept of departments) {
+           if (raw.includes(dept)) {
+             matchedDepartment = dept;
+             break;
+           }
+         }
+         
+         return [
+           {
+             json: {
+               originalMessage: raw,
+               department: matchedDepartment
+             }
+           }
+         ];
+    ```
+   - Execute Step
+ 2. Change the SQL node
+    ```sql
+         SELECT id, name, username, department, email
+         FROM users
+         WHERE LOWER(department) = LOWER('{{ $json.department }}')
+         ORDER BY id;
+    ```
+    
 
 
   
