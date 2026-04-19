@@ -200,7 +200,23 @@ Click Execute
 4. Publish
 5. Create employees.html
 
-
+## Assistant AI chatbot
+1. Copy the AuroraTech Login API
+2. Double Click Webhook, change only below and keep the rest
+   - Path: assistant
+   - HTTP Method: POST
+3. Double Click "Execute a SQL query" change the Query to:
+    ```sql
+         SELECT id, name, username, department, email
+         FROM users
+         WHERE LOWER(department) = LOWER('{{ $json.body.message }}')
+         ORDER BY id;
+    ```
+    - Click Execute previous nodes
+    - Delete IF
+    - Click "+" and Search and Click Respond to Webhook
+       - Respond With: All Incoming Items
+       - Execute Step
 
 
   
