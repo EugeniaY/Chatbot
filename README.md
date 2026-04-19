@@ -113,7 +113,9 @@ Click Execute
          -d "{\"username\":\"peter1\",\"password\":\"RVMRx1vYgi\"}"
          ```
       - Result in Webhook will shows like this
-        <img width="800" height="1340" alt="image" src="https://github.com/user-attachments/assets/d008fb68-0b07-44d4-8483-d9232f559d53" />
+        
+        <img width="2765" height="1352" alt="image" src="https://github.com/user-attachments/assets/1d052790-017b-4d22-b855-d4485e27d8d9" />
+
       -  Double click the "Execute a SQL query"
       -  Execute workflow
      
@@ -125,7 +127,8 @@ Click Execute
           - Click '\/' to number -> is greater than
        - Click value2 and fill in with 0
        - Click Execute step
-         <img width="800" height="1158" alt="image" src="https://github.com/user-attachments/assets/4402cdee-5421-419b-8378-e0e85beb520c" />
+         <img width="2765" height="1351" alt="image" src="https://github.com/user-attachments/assets/b6c60d59-cef0-400b-ae65-9caeb5ac8df7" />
+
 
    11. Respond to Webhook
        - Click true "+"
