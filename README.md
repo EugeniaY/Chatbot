@@ -57,4 +57,11 @@ Then click Excute
 ```
 
 Click Execute
-   
+
+7. Open n8n (using node js)
+   - Win + R
+   - cmd
+   - npx n8n
+   - Type "o" to open browser
+
+8. 
