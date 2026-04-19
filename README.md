@@ -64,4 +64,18 @@ Click Execute
    - npx n8n
    - Type "o" to open browser
 
-8. 
+8. Connect Postgress to n8n
+   - Create workflow
+   - Click "+" Add first step..
+   - Find and Click Postgres
+   - Click Execute a SQL query
+   - Credential to connect with -> Create new credential -> Fill in the credential like this
+     ```sql
+      Host: localhost
+      Database: auroratech_db
+      User: postgres
+      Password: your postgres password
+      Port: 5432
+      SSL: Disable
+      ```
+   - Click Save
