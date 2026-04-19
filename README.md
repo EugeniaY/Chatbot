@@ -402,7 +402,7 @@ Click Execute
 
       a. (IF -> False -> If -> True)
          - Add a Execute a SQL query node
-         - Rename SQL
+         - Rename SQL Top Dept
          - Change the Query:
             ```sql
             SELECT department, COUNT(*) AS total
@@ -417,7 +417,7 @@ Click Execute
          - Condition: {{ $json.department }}
          - operator (string): is not empty
               - (If -> True)
-                    - Copy SQl and connect with If -> True
+                    - Copy SQL Top Dept and connect with If -> True
                     - Rename SQL List
                     - Change the Query
                       ```sql
