@@ -223,12 +223,7 @@ Click Execute
        - Execute Step
    - Create assistant.html
   
-## Update AI Assistant Feature
-- show marketing employees
-- list finance staff
-- who works in IT
-- give me admin employees
-
+## Update Dashboard Stats
 1. Add node Code between Webhook and Execute a SQL query (Javascript)
    ```
          const raw = ($json.body?.message || "").toLowerCase().trim();
@@ -303,5 +298,140 @@ Click Execute
           "message":"Department not recognized..."
       }
 
-  
+  ## AuroraTech Dashboard Stats API
+  1. Copy AuroraTech Employee API workfloq
+  2. Double Click Webhook
+     - Method: GET
+     - Path: dashboard-stats
+     - Respond: Using 'Respond to Webhook' Node
+3. Double Click "Execute a SQL query" change the Query to:
+    ```sql
+         SELECT
+        (SELECT COUNT(*) FROM users) AS total_employees,
+        (SELECT COUNT(DISTINCT department) FROM users) AS total_departments,
+        (SELECT COUNT(*) FROM users WHERE LOWER(department) = 'marketing') AS marketing_count,
+        (SELECT COUNT(*) FROM users WHERE LOWER(department) = 'finance') AS finance_count;
+    ```
+4. Double Click Respond to Webhook
+   - Respond With: JSON
+   - Response Body (Expression) : {{ $json }}
+   
+5. Test by opening http://localhost:5678/webhook/dashboard-stats
+   - Must show like
+     ```
+         {
+           "total_employees": 300,
+           "total_departments": 7,
+           "marketing_count": 54,
+           "finance_count": 41
+         }
+    ```
+7. Test the dashboard.html
 
+## Update AI Assistant Feature
+- show marketing employees
+- list finance staff
+- who works in IT
+- give me admin employees
+1. Go to AuroraTech Assistant API in n8n
+2. Double Click Code and change like this
+    ```
+         const text = ($json.body?.message || "").toLowerCase().trim();
+         const departments = [
+           "marketing",
+           "finance",
+           "it",
+           "admin",
+           "sales",
+           "hr",
+           "operations"
+         ];
+         
+         let department = null;
+         
+         for (const dep of departments) {
+           if (text.includes(dep)) {
+             department = dep;
+             break;
+           }
+         }
+         
+         let intent = "unknown";
+         
+         if (department) {
+           intent = "list";
+         }
+         
+         if ((text.includes("how many") || text.includes("count")) && department) {
+           intent = "count";
+         }
+         
+         if (
+           text.includes("top department") ||
+           text.includes("most employees") ||
+           text.includes("largest department")
+         ) {
+           intent = "top_department";
+         }
+         
+         return [
+         {
+           json: {
+             originalMessage: text,
+             department,
+             intent
+           }
+         }
+         ];
+    ```
+    3. Double Click Execute a SQL query (IF -> true)
+       - Rename SQL Count
+       - Change the Query
+         ```
+         {
+           "total_employees": 300,
+           "total_departments": 7,
+           "marketing_count": 54,
+           "finance_count": 41
+         }
+       ```
+   4. Add If in (IF -> False)
+      - Rename Title "IF Top Department"
+      - condition: {{ $json.department }}
+      - operator (string): is not empty
+
+      a. (IF -> False -> If -> True)
+         - Add a Execute a SQL query node
+         - Rename SQL
+         - Change the Query:
+            ```sql
+            SELECT department, COUNT(*) AS total
+            FROM users
+            GROUP BY department
+            ORDER BY total DESC
+            LIMIT 1;
+            ```
+      b. (IF -> False -> If -> False)
+         - Add If
+         - Rename the title "IF Department Exists"
+         - Condition: {{ $json.department }}
+         - operator (string): is not empty
+              - (If -> True)
+                    - Copy SQl and connect with If -> True
+                    - Rename SQL List
+                    - Change the Query
+                      ```sql
+                           SELECT id,name,username,email,department
+                           FROM users
+                           WHERE LOWER(department)=LOWER('{{ $json.department }}');
+                     ```
+             - (IF -> False -> If -> False)
+               - Connect the Respond to Webhook1 with IF -> False
+               - the one that has
+                 ```sql
+                           {{ {
+                           status:"fail",
+                           message:"Department not recognized."
+                           } }}
+                 ```
+                 
