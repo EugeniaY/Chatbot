@@ -215,7 +215,11 @@ Click Execute
     - Click Execute previous nodes
     - Delete IF
     - Click "+" and Search and Click Respond to Webhook
-       - Respond With: All Incoming Items
+       - Respond With : JSON
+       - Response Body (Expression) : 
+         ```
+         {{ $input.all().map(item => item.json) }}
+         ```
        - Execute Step
 
 
