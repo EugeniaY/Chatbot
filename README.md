@@ -268,8 +268,40 @@ Click Execute
          WHERE LOWER(department) = LOWER('{{ $json.department }}')
          ORDER BY id;
     ```
-    
+3. Add If
+   - Conditions: {{ $json.department }}
+   - operator -> string : is not empty
+   <img width="1690" height="518" alt="image" src="https://github.com/user-attachments/assets/b0ceeb2e-19a8-42b0-bc02-31ea4e2dff57" />
 
+4. Add "Respond to Webhook" for false
+   - Respond With: JSON
+   - Response Body (expression):
+     ```
+         {{ {
+           status: "fail",
+           message: "Department not recognized. Try: Marketing, Finance, IT, Admin, Sales, HR, Operations."
+         } }}
+    ```
+5. Execute Workflow
+6. Open cmd
+   - Check valid Input
+   ```
+         curl -X POST http://localhost:5678/webhook-test/assistant ^
+         -H "Content-Type: application/json" ^
+         -d "{\"message\":\"show marketing employees\"}"
+    ```
+   - Check invalid input
+      ```
+         curl -X POST http://localhost:5678/webhook-test/assistant ^
+         -H "Content-Type: application/json" ^
+         -d "{\"message\":\"show manager employees\"}"
+       ```
+    - should appear like:
+      
+      {
+          "status":"fail",
+          "message":"Department not recognized..."
+      }
 
   
 
