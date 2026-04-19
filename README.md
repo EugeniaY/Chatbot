@@ -178,9 +178,27 @@ Click Execute
        - Should Appear like this
          <img width="2345" height="380" alt="image" src="https://github.com/user-attachments/assets/2d4a1206-060b-4043-8f2f-f41b643cb995" />
 
-         
+   13. Rename to AuroraTech Login API and Publish the n8n
+   14. Create Login Page using HTML, CSS      
 
-   
+## Employee List
+1. Copy the previous Work flow and rename the workflow to AuroraTech Employees API
+2. Double Click Webhook, change only below and keep the rest
+   - Path: employees
+   - HTTP Method: Get
+3. Double Click "Execute a SQL query" change the Query to:
+    ```sql
+         SELECT id, name, username, department, email
+         FROM users
+         ORDER BY id;
+    ```
+    - Click Execute previous nodes
+    - Delete IF
+    - Click "+" and Search and Click Respond to Webhook
+       - Respond With: All Incoming Items
+       - Execute Step
+4. Publish
+5. Create employees.html
 
 
 
