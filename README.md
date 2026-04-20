@@ -388,13 +388,18 @@ Click Execute
        - Rename SQL Count
        - Change the Query
          ```
-         {
-           "total_employees": 300,
-           "total_departments": 7,
-           "marketing_count": 54,
-           "finance_count": 41
-         }
-       ```
+         SELECT COUNT(*) AS total
+         FROM users
+         WHERE LOWER(department)=LOWER('{{ $json.department }}');
+          ```
+       - Respond to Webhook
+          ```
+         {{ {
+           intent: "count",
+           department: $("Code in JavaScript").first().json.department,
+           total: Number($json.total)
+         } }}
+          ```
    4. Add If in (IF -> False)
       - Rename Title "IF Top Department"
       - condition: {{ $json.department }}
@@ -411,6 +416,15 @@ Click Execute
             ORDER BY total DESC
             LIMIT 1;
             ```
+         - Respond to Webhook
+          ```
+            {{ {
+            status:"success",
+            intent:"top_department",
+            department:$json.department,
+            total:Number($json.total)
+            } }}
+          ```
       b. (IF -> False -> If -> False)
          - Add If
          - Rename the title "IF Department Exists"
@@ -425,10 +439,18 @@ Click Execute
                            FROM users
                            WHERE LOWER(department)=LOWER('{{ $json.department }}');
                      ```
+                    - Respond to Webhook
+                      ```
+                        {{ {
+                          intent: "top_department",
+                          department: $json.department,
+                          total: Number($json.total)
+                        } }}
+                      ```
              - (IF -> False -> If -> False)
                - Connect the Respond to Webhook1 with IF -> False
-               - the one that has
-                 ```sql
+               - Respond to Webhook:
+                 ```
                            {{ {
                            status:"fail",
                            message:"Department not recognized."
