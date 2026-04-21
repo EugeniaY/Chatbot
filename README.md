@@ -464,4 +464,24 @@ Click Execute
                     message: "Department not recognized. Try: Marketing, Finance, IT, Admin, Sales, HR, Operations."
                   } }}
                  ```
-                 
+  6. Do Testing
+     - input: Marketing
+     - output: There are 54 employee(s) in Marketing.
+       
+     - input:
+          - list Marketing
+          - show Marketing employees
+          - employees in Marketing
+     - output: card-card employee that we make
+    
+     - input:
+          - top department
+          - largest department
+          - most employees
+     - output: Marketing is the largest department with 54 employee(s).
+    
+     - input:
+          - Legal
+          - hello
+          - 123
+     - output: Department not recognized. Try: Marketing, Finance, IT, Admin, Sales, HR, Operations.
