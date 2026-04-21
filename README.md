@@ -335,8 +335,11 @@ Click Execute
 - give me admin employees
 1. Go to AuroraTech Assistant API in n8n
 2. Double Click Code and change like this
+3. Pick Mode: Run Once for Each Item
     ```
-         const text = ($json.body?.message || "").toLowerCase().trim();
+         const rawMessage = ($json.body?.message || $json.message || "").trim();
+         const text = rawMessage.toLowerCase();
+         
          const departments = [
            "marketing",
            "finance",
@@ -349,42 +352,45 @@ Click Execute
          
          let department = null;
          
-         for (const dep of departments) {
-           if (text.includes(dep)) {
-             department = dep;
+         for (const dept of departments) {
+           if (text.includes(dept)) {
+             department = dept;
              break;
            }
          }
          
-         let intent = "unknown";
-         
-         if (department) {
-           intent = "list";
-         }
-         
-         if ((text.includes("how many") || text.includes("count")) && department) {
-           intent = "count";
-         }
+         let intent = "fail";
          
          if (
            text.includes("top department") ||
-           text.includes("most employees") ||
-           text.includes("largest department")
+           text.includes("largest department") ||
+           text.includes("most employees")
          ) {
            intent = "top_department";
          }
-         
-         return [
-         {
-           json: {
-             originalMessage: text,
-             department,
-             intent
-           }
+         else if (
+           text.includes("list") ||
+           text.includes("show") ||
+           text.includes("employees in") ||
+           text.includes("employee list")
+         ) {
+           intent = "list";
          }
-         ];
+         else if (department) {
+           intent = "count";
+         }
+         
+         return {
+           message: rawMessage,
+           department,
+           intent
+         };
     ```
-    3. Double Click Execute a SQL query (IF -> true)
+    3. Change the If Conditions becomes {{ $json.intent }}
+        - use string: is equal to
+        - value 2: count
+       
+    4. Double Click Execute a SQL query (IF -> true)
        - Rename SQL Count
        - Change the Query
          ```
@@ -392,7 +398,7 @@ Click Execute
          FROM users
          WHERE LOWER(department)=LOWER('{{ $json.department }}');
           ```
-       - Respond to Webhook
+       - Respond to Webhook -> Response Body (Expression)
           ```
          {{ {
            intent: "count",
@@ -400,10 +406,11 @@ Click Execute
            total: Number($json.total)
          } }}
           ```
-   4. Add If in (IF -> False)
+   5. Add If in (IF -> False)
       - Rename Title "IF Top Department"
-      - condition: {{ $json.department }}
-      - operator (string): is not empty
+      - condition: {{ $json.intent }}
+      - operator (string): is equal to
+      - value2: top_department
 
       a. (IF -> False -> If -> True)
          - Add a Execute a SQL query node
@@ -416,7 +423,7 @@ Click Execute
             ORDER BY total DESC
             LIMIT 1;
             ```
-         - Respond to Webhook
+         - Respond to Webhook2 -> Response Body (Expression)
           ```
             {{ {
             status:"success",
@@ -430,7 +437,7 @@ Click Execute
          - Rename the title "IF Department Exists"
          - Condition: {{ $json.department }}
          - operator (string): is not empty
-              - (If -> True)
+              - (IF -> False -> If -> False -> If -> True)
                     - Copy SQL Top Dept and connect with If -> True
                     - Rename SQL List
                     - Change the Query
@@ -439,21 +446,22 @@ Click Execute
                            FROM users
                            WHERE LOWER(department)=LOWER('{{ $json.department }}');
                      ```
-                    - Respond to Webhook
+                    - Respond to Webhook3 -> Response Body (Expression)
                       ```
                         {{ {
-                          intent: "top_department",
-                          department: $json.department,
-                          total: Number($json.total)
+                          status: "success",
+                          intent: "list",
+                          department: $input.first().json.department,
+                          employees: $input.all().map(item => item.json)
                         } }}
                       ```
-             - (IF -> False -> If -> False)
+             - (IF -> False -> If -> False -> If -> False)
                - Connect the Respond to Webhook1 with IF -> False
                - Respond to Webhook:
                  ```
-                           {{ {
-                           status:"fail",
-                           message:"Department not recognized."
-                           } }}
+                    {{ {
+                    status: "fail",
+                    message: "Department not recognized. Try: Marketing, Finance, IT, Admin, Sales, HR, Operations."
+                  } }}
                  ```
                  
