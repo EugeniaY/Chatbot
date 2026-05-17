@@ -599,3 +599,93 @@ curl -X POST http://localhost:5678/webhook-test/assistant ^
 
 
 Output: 
+
+
+
+Adding the Transaction Files
+1. Open pgAdmin
+2. Severs -> PostgreSQL -> Databases -> auroratech_db -> Click Right -> Query Tool
+3. Paste
+   CREATE TABLE sales_data (
+    product_id INT,
+    sale_date DATE,
+    sales_rep TEXT,
+    region TEXT,
+    sales_amount NUMERIC,
+    quantity_sold INT,
+    product_category TEXT,
+    unit_cost NUMERIC,
+    unit_price NUMERIC,
+    customer_type TEXT,
+    discount NUMERIC,
+    payment_method TEXT,
+    sales_channel TEXT,
+    region_and_sales_rep TEXT
+
+);
+4. Click Execute
+5. It will output Query returned successfully in 179 msec.
+
+
+Import CSV
+1. In pgAdmin
+   auroratech_db
+   → Schemas
+   → public
+   → Tables
+   → sales_data
+   CLick Right in sales_data -> Import/Export Data
+   <img width="1408" height="1104" alt="image" src="https://github.com/user-attachments/assets/d2c9aea7-ddd0-4ba6-9946-1d1a64cdb1e0" />
+   Make sure Options are like this
+   <img width="1404" height="1116" alt="image" src="https://github.com/user-attachments/assets/b9250637-c226-4564-8e9a-1df8a5ecba74" />
+
+   Click Ok
+   If succeed it will output like this
+
+   <img width="1457" height="672" alt="image" src="https://github.com/user-attachments/assets/ab56c4ff-a844-40c4-8d52-4c1cebbc0785" />
+
+Testing
+1. Severs -> PostgreSQL -> Databases -> auroratech_db -> Click Right -> Query Tool
+2. Paste SELECT * FROM sales_data LIMIT 10;
+3. Click Execute
+   <img width="2231" height="1632" alt="image" src="https://github.com/user-attachments/assets/896e5a5c-36a3-461d-8e6c-7483f7cf4b90" />
+
+
+Go to n8n and change Execute a SQL query in Postgres
+Description:
+You are an SQL assistant for AuroraTech.
+
+Convert user requests into PostgreSQL SELECT queries.
+
+Available tables:
+
+users:
+- id
+- name
+- username
+- department
+- email
+
+sales_data:
+- product_id
+- sale_date
+- sales_rep
+- region
+- sales_amount
+- quantity_sold
+- product_category
+- unit_cost
+- unit_price
+- customer_type
+- discount
+- payment_method
+- sales_channel
+- region_and_sales_rep
+
+Rules:
+- Generate SELECT queries only
+- Never use DROP
+- Never use DELETE
+- Never use UPDATE
+- Never use ALTER
+- Never invent columns
