@@ -485,3 +485,117 @@ Click Execute
           - hello
           - 123
      - output: Department not recognized. Try: Marketing, Finance, IT, Admin, Sales, HR, Operations.
+
+
+Connect to AI Agent
+Webhook -> Code in JavaScript -> AI Agent
+
+AI Agent 
+- Chat Model -> Ollama Chat Model
+
+- Click Select Credential and Pick Create New Credential
+<img width="2047" height="1003" alt="image" src="https://github.com/user-attachments/assets/d554c6de-ac6f-457e-b84a-73e5758b4b87" />
+
+- Fill in Base URL, API Key just empty and Save (API Key it will generate by itself)
+  <img width="1943" height="1118" alt="image" src="https://github.com/user-attachments/assets/f1d17c4e-5154-49fc-a558-4d7c989c7e60" />
+
+- Open Win + R -> cmd
+- ollama pull llama3.1:8b
+- because tinyllama won't work 
+- Model -> Expression -> {{ "tinyllama:latest" }}
+  <img width="2766" height="1324" alt="image" src="https://github.com/user-attachments/assets/23dc78ec-d04f-45ce-a1bc-10ec8ecd4fcb" />
+
+
+- Tool -> Postgres Tool
+     - Operation: Execute Query
+     - Query: {{ $fromAI("query") }}
+     - Tool Description: Set Manually
+     - Description:
+       Use this tool to query employee database.
+       Database table:
+       users(id,name,username,department,email)
+       
+       Generate only SELECT queries.
+       Do not generate INSERT, UPDATE, DELETE, DROP, ALTER, or TRUNCATE.
+       Do not invent database information.
+       If no data is found, say "No data found."
+
+
+
+- Double Click the AI Agent
+     - Source for Prompt (User Message) : Define below
+     - Prompt (User Message) : {{ $json.message }}
+     - Options -> Add Option -> System Message
+          - System Message:
+            You are an AI assistant for AuroraTech.
+
+            You can have normal conversations with users.
+            
+            For greetings or general questions:
+            - Answer normally without using tools.
+            
+            For employee or company database questions:
+            - Use the PostgreSQL tool.
+            
+            Rules:
+            - Never invent database information.
+            - If no data is found, say "No data found."
+            - Keep answers short and clear.
+
+- Change the Code in Javascript
+   ```javascript
+         const rawMessage = ($json.body?.message || $json.message || "").trim();
+
+         return {
+           message: rawMessage
+         };
+    ```
+
+- Add Respond to Webhook after AI Agent
+- Webhook -> Code in JavaSccript -> AI Agent -> Respond to Webhook
+     - Respond With: First Incoming Item
+ 
+TESTING
+- in n8n click Execute Workflow
+- Open in Terminal:
+  
+  curl -X POST http://localhost:5678/webhook-test/assistant ^
+  
+   -H "Content-Type: application/json" ^
+  
+   -d "{\"message\":\"hello\"}"
+
+Output:
+
+Hello! How can I help you today?
+
+Input: 
+curl -X POST http://localhost:5678/webhook-test/assistant ^
+
+-H "Content-Type: application/json" ^
+
+-d "{\"message\":\"list Marketing employees\"}"
+
+
+Output: 
+
+Input: 
+curl -X POST http://localhost:5678/webhook-test/assistant ^
+
+-H "Content-Type: application/json" ^
+
+-d "{\"message\":\"how many employees are there?\"}"
+
+
+Output: 
+"output":"Here is the list of Marketing employees:\n\n1. Peter Smith\n2. Zachary Davis\n3. Brian Anderson\n4. Quincy Hernandez\n5. Ulysses Garcia\n6. Victor Garcia\n7. Zachary Lopez\n8. Diana Anderson\n9. Oscar Wilson\n10. Thomas Jones\n11. Jason Hernandez\n12. Laura Lopez\n13. Zachary Davis\n14. Oscar Wilson\n15. Grace Garcia\n16. Brian Lopez\n17. Andrew Brown\n18. Catherine Wilson\n19. Samuel Garcia\n20. Rachel Johnson\n21. Ethan Anderson\n22. Peter Gonzalez\n23. Grace Miller\n24. Victor Davis\n25. Ethan Anderson\n26. Rachel Rodriguez\n27. Felix Garcia\n28. Michael Johnson\n29. Victor Brown\n30. Zachary Brown\n31. Michael Rodriguez\n32. Laura Garcia\n33. Grace Taylor\n34. Peter Lopez\n35. Andrew Jones\n36. Diana Davis\n37. Felix Hernandez\n38. Victor Lopez\n39. Victor Williams\n40. Henry Anderson\n41. Irene Martinez\n42. Zachary Williams\n43. Michael Martinez\n44. Andrew Smith\n45. Laura Wilson\n46. Thomas Gonzalez\n47. Xavier Wilson\n48. Thomas Rodriguez\n49. Kevin Lopez\n50. Rachel Anderson\n51. Jason Rodriguez\n52. Andrew Garcia\n53. Ethan Davis\n54. Henry Gonzalez\n\nNote: There are 54 Marketing employees in the database."
+
+Input: 
+curl -X POST http://localhost:5678/webhook-test/assistant ^
+
+-H "Content-Type: application/json" ^
+
+-d "{\"message\":\"which department has the most employees?\"}"
+
+
+Output: 
